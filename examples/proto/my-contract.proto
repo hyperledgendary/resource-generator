@@ -1,0 +1,62 @@
+
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+syntax = "proto3";
+package firstcontract;
+
+import "fabric/contract.proto";
+import "fabric/metadata.proto";
+
+message ContractResult {
+    int32 code = 1;
+    string msg = 2;
+}
+
+message AssetResponse {
+    MyAsset asset = 1;
+}
+//
+// 
+message MyAsset {
+    message Key {
+       string assetid = 1;
+    }
+    Key assetKey = 1;
+    string value = 2;
+}
+
+message ExistsResult {
+    bool exists = 1;
+}
+
+message AssetExistsRequest {
+    MyAsset.Key key = 1;
+}
+
+message ReadAssetRequest {
+    MyAsset.Key key = 1;
+}
+
+message CreateAssetRequest {
+     MyAsset.Key key = 1;
+     string value = 2;
+}
+
+message UpdateAssetRequest {
+    MyAsset.Key key = 1;
+    string value = 2;
+}
+
+message DeleteAssetRequest {
+    MyAsset.Key key = 1;
+}
+
+service MyContract {
+    rpc assetExists (AssetExistsRequest) returns (ExistsResult);
+    rpc createAsset (CreateAssetRequest) returns (ContractResult);
+    rpc readAsset (ReadAssetRequest) returns (MyAsset);
+    rpc updateAsset (UpdateAssetRequest) returns (ContractResult);
+    rpc deleteAsset (DeleteAssetRequest) returns (ContractResult);
+}

@@ -1,0 +1,68 @@
+syntax = "proto3";
+package commercialpaper;
+
+import "fabric/contract.proto";
+import "fabric/metadata.proto";
+
+// Business Objects that used in this scenario
+message CommercialPaper {
+
+    option (fabric.network_serialization).defaultstyle = JSON;
+
+    message Key {
+        string paperid = 1;
+    }
+    enum State {
+        UNKNOWN = 0;
+        ISSUED = 1;
+        TRADING = 2;
+        REDEEMED = 3;
+    }
+
+    Key paperKey = 1;
+    State state = 2;
+    string issuer = 3            [(fabric.typeInfo).pattern="[a-zA-Z]"];
+    string owner = 4;
+    string issueTimestamp = 5    [(fabric.typeInfo).format=DATE_TIME]; 
+    string maturityTimestamp = 6 [(fabric.typeInfo).format=DATE_TIME];
+    int32 facevalue = 7;
+
+}
+
+// API arguments and return types
+message AssetExistsRequest {
+    CommercialPaper.Key key = 1;
+}
+
+message IssueRequest {
+    CommercialPaper.Key key = 1;
+    string issuer = 2;
+    string issueTimestamp = 3     [(fabric.typeInfo).format=DATE_TIME];
+    string maturityTimestamp = 4  [(fabric.typeInfo).format=DATE_TIME];
+    int32 facevalue = 5;
+}
+
+message BuyRequest {
+    CommercialPaper.Key key = 1;
+    string newOwner = 2;
+    string buyTimestamp = 3 [(fabric.typeInfo).format=DATE_TIME]; 
+    int32 price = 4;
+}
+
+message RedeemRequest {
+    CommercialPaper.Key key = 1;
+    string redeemTimestamp = 2 [(fabric.typeInfo).format=DATE_TIME];
+    string redeemingOwner = 3   [(fabric.transient)=true]; 
+}
+
+message ExistsResult {
+    bool exists = 1;
+}
+
+// API definitions
+service CommercialPaperContract {
+    rpc exists (AssetExistsRequest) returns (ExistsResult);
+    rpc issue (IssueRequest) returns (CommercialPaper);
+    rpc buy (BuyRequest) returns (CommercialPaper);
+    rpc redeem (RedeemRequest) returns (CommercialPaper);
+}

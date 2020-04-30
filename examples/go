@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -xe
+PROTOC_PLUGIN=$(which protoc-gen-fabart)
+protoc --plugin="${PROTOC_PLUGIN}" -I ./proto ./proto/commercial-paper.proto  --fabart_out=json=y,js=y,ts=y:./generated

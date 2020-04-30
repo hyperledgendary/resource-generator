@@ -1,0 +1,52 @@
+{% macro schema(s) -%}
+{% if s.type %} {{-s.type|trim-}} {% else %} {{-s.$ref|trim-}} {% endif %}
+{%- endmacro %}
+
+{% macro parameters(params) -%}
+{% for p in params -%} {{p.name}}:{{- schema(p.schema) -}}  {%- if not loop.last -%}, {% endif -%} {%- endfor -%}
+{%- endmacro %}
+
+{% macro arglist(params) %}
+{% if params %}
+{% for p in params -%} JSON.stringify({{p.name}})
+    {%- if not loop.last -%}, {% endif -%}
+{%- endfor %}
+{%- endif %}
+{% endmacro %}
+
+{
+"$schema": "https://fabric-shim.github.io/release-1.4/contract-schema.json",
+  "components": {
+    "schemas": {
+    }
+  },
+   "contracts": {
+
+
+{% for f in file %}
+
+  {% for s in f.service %}
+    "{{ s.name}}" : {
+        "name" : "{{s.name}}",
+        "transactions" : [
+            {% for tx in s.method %}
+    
+                {
+                    "name" :"{{tx.name}}",
+                    "tag":"",
+                    "returns":"{{tx.inputType}}",
+                    "parameters":["{{tx.outputType}}"]
+                }
+                {%- if not loop.last -%}, {% endif -%}
+            {% endfor %}
+
+
+        ]
+    }
+  {% endfor %}
+
+{% endfor %}
+
+   },
+   "info":{"title": "???", "version": "???" }
+}

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package fabric;
+
+import "google/protobuf/descriptor.proto";
+
+message Serialization {
+    
+    oneof method {
+        DefaultMethods defaultstyle = 1;
+        string customid = 2;
+    }
+
+    enum DefaultMethods {
+        UNKNOWN = 0;
+        JSON = 1;
+        PROTOBUF = 2;
+    }
+
+}
+
+extend google.protobuf.MessageOptions {
+    Serialization network_serialization = 1501000;
+    Serialization ledger_serialization =  1501001;
+}
+
+message Typing {
+    Formats format = 1;
+    enum Formats {
+        UNKNOWN = 0;
+        DATE_TIME=  1; // RFC 3339
+        BYTE = 2;      // base64 encoded
+    }
+    string pattern = 2;  // (a valid regular expression, according to the Ecma-262 Edition 5.1 regular expression dialect)
+}
+
+extend google.protobuf.FieldOptions {
+    Typing typeInfo = 1401000;
+    bool transient = 1401001;
+}

@@ -1,0 +1,15 @@
+cfg:
+	name: SinglePageMarkdown
+	description: Single page summary of contract
+	# The version of the metadata schema this generator can handle
+	schemaref: version1
+	filter: >
+    [
+      {
+        "_filename":"docs",
+        "_extension":".md",
+        "_data":$$,
+        "_template":"./singleSummary-md.njk",
+        "_prettier":"none"
+      }
+    ]

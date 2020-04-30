@@ -1,0 +1,78 @@
+{
+    "name": "generator",
+    "version": "1.0.0",
+    "description": "Resource Generator from metadata",
+    "main": "dist/index.js",
+    "bin": {
+        "fabgen": "./dist/cli.js",
+        "protoc-gen-fabart": "./dist/protoc-plugin/protoc-gen-fabart.js"
+    },
+    "typings": "dist/index.d.ts",
+    "engines": {
+        "node": ">=8",
+        "npm": ">=5"
+    },
+    "scripts": {
+        "lint": "tslint -c tslint.json 'src/**/*.ts'",
+        "pretest": "npm run lint",
+        "test": "nyc mocha -r ts-node/register src/**/*.spec.ts",
+        "build": "tsc && cp -r ./templates ./dist/  && cp -r ./src/protoc-plugin/google ./dist/protoc-plugin/ && cp -r ./src/protoc-plugin/fabric ./dist/protoc-plugin/",
+        "build:watch": "tsc -w",
+        "prepublishOnly": "npm run build"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "ajv": "^6.6.1",
+        "buffer-to-uint8array": "^1.1.0",
+        "composer-concerto": "^0.70.5",
+        "google-protobuf": "^3.11.4",
+        "jsonata": "^1.6.4",
+        "mkdirp": "^0.5.1",
+        "nunjucks": "^3.1.7",
+        "prettier": "^1.15.3",
+        "protobufjs": "^6.9.0",
+        "stream-to-promise": "^2.2.0",
+        "ts-protoc-gen": "^0.12.0",
+        "tsc": "^1.20150623.0",
+        "yargs": "^12.0.5"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.1.4",
+        "@types/mocha": "^5.2.3",
+        "@types/node": "^10.3.6",
+        "@types/sinon": "^5.0.7",
+        "@types/sinon-chai": "^3.2.0",
+        "chai": "^4.1.2",
+        "gulp": "^4.0.0",
+        "literate-shell": "file:../literate-shell/",
+        "mocha": "^5.2.0",
+        "nyc": "^12.0.2",
+        "sinon": "^6.0.0",
+        "sinon-chai": "^3.2.0",
+        "standard-version": "^4.4.0",
+        "ts-node": "^7.0.0",
+        "tslint": "^5.10.0",
+        "typescript": "^3.3.3"
+    },
+    "nyc": {
+        "extension": [
+            ".ts",
+            ".tsx"
+        ],
+        "exclude": [
+            "coverage/**",
+            "dist/**"
+        ],
+        "reporter": [
+            "text-summary",
+            "html"
+        ],
+        "all": true,
+        "check-coverage": true,
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+    }
+}

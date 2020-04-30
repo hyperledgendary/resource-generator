@@ -1,0 +1,190 @@
+{
+  "$schema": "https://hyperledger.github.io/fabric-chaincode-node/release-2.0/api/contract-schema.json",
+  "components": {
+    "ContractResult": {
+      "title": "ContractResult",
+      "$id": "ContractResult",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "code": {
+          "name": "code",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "msg": {
+          "name": "msg",
+          "schema": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "MyAsset": {
+      "title": "MyAsset",
+      "$id": "MyAsset",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "assetKey": {
+          "name": "assetKey",
+          "schema": {
+            "$ref": "#/components/schemas/Key"
+          }
+        },
+        "value": {
+          "name": "value",
+          "schema": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Key": {
+      "title": "Key",
+      "$id": "Key",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "assetid": {
+          "name": "assetid",
+          "schema": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ExistsResult": {
+      "title": "ExistsResult",
+      "$id": "ExistsResult",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "exists": {
+          "name": "exists",
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "contracts": {
+    "MyContract": {
+      "name": "MyContract",
+      "transactions": [
+        {
+          "name": "assetExists",
+          "tag": [],
+          "parameters": [
+            {
+              "name": "key",
+              "schema": {
+                "$ref": "#/components/schemas/Key"
+              }
+            }
+          ],
+          "returns": {
+            "name": "exists",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "name": "createAsset",
+          "tag": [],
+          "parameters": [
+            {
+              "name": "key",
+              "schema": {
+                "$ref": "#/components/schemas/Key"
+              }
+            },
+            {
+              "name": "value",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "returns": {
+            "name": "code",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        {
+          "name": "readAsset",
+          "tag": [],
+          "parameters": [
+            {
+              "name": "key",
+              "schema": {
+                "$ref": "#/components/schemas/Key"
+              }
+            }
+          ],
+          "returns": {
+            "name": "assetKey",
+            "schema": {
+              "$ref": "#/components/schemas/MyAsset"
+            }
+          }
+        },
+        {
+          "name": "updateAsset",
+          "tag": [],
+          "parameters": [
+            {
+              "name": "key",
+              "schema": {
+                "$ref": "#/components/schemas/Key"
+              }
+            },
+            {
+              "name": "value",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "returns": {
+            "name": "code",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        {
+          "name": "deleteAsset",
+          "tag": [],
+          "parameters": [
+            {
+              "name": "key",
+              "schema": {
+                "$ref": "#/components/schemas/Key"
+              }
+            }
+          ],
+          "returns": {
+            "name": "code",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "info": {
+    "title": "firstcontract",
+    "version": ""
+  }
+}

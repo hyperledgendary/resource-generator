@@ -1,0 +1,15 @@
+cfg:
+	name: Metadata
+	description: Internal Metadata
+	# The version of the metadata schema this generator can handle
+	schemaref: version1
+	filter: >
+    [
+      {
+        "_filename":"metadata",
+        "_extension":".json",
+        "_data":$$,
+        "_template":"./metadata-json.njk",
+        "_prettier":"none"
+      }
+    ]
