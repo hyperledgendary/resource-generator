@@ -10,10 +10,6 @@ cfg:
         "_extension":".ts",
         "_data":$lookup($$.components.schemas,$),
         "_template":"class.njk",
-        "_prettier":  { "parser":"typescript" , "options":{
-          "trailingComma":"all",
-          "singleQuote":"true"
-          }
-        }
+        "_prettier":  "none"
       }
     ]

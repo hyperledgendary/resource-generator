@@ -25,7 +25,10 @@ class ResourceFactory {
         this.jsonData = JSON.parse(fs.readFileSync(this.resolvedFilename, 'utf8'));
         this.templateRoot = path.join(__dirname, 'templates', config.task);
         LOG(`Using the template root at ${this.templateRoot}`);
-        this.output = path.resolve(config.output);
+        if (!fs.existsSync(this.templateRoot)) {
+            throw new Error(`Unknown template::${this.templateRoot}`);
+        }
+        this.output = path.resolve(config.output, config.task);
         LOG(`Using the output directory of ${this.output}`);
         mkdirp.sync(this.output);
         this.templateCfg = yaml.safeLoad(fs.readFileSync(path.join(this.templateRoot, 'cfg.yaml'), 'utf8'));
@@ -44,7 +47,7 @@ class ResourceFactory {
         // trim out typenames and replace with void if needed
         this.env.addFilter('objectname', (str = '') => {
             const typename = str.trim();
-            console.log(`=${typename.trim()}=`);
+            // console.log(`=${typename.trim()}=`);
             if (typename.startsWith('#')) {
                 return typename.substring(typename.lastIndexOf('/') + 1);
             }
@@ -60,6 +63,7 @@ class ResourceFactory {
         const filter = 'filter';
         const expression = jsonata(this.templateCfg[filter]);
         const result = expression.evaluate(this.jsonData);
+        LOG(this.jsonData);
         // iterate over the results
         result.forEach((action) => {
             const outputFilename = path.join(this.output, action._filename);

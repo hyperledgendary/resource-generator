@@ -29,11 +29,12 @@ const results = yargs
             describe: 'Directory files to be written to (will be created if does not exist)',
             requiresArg: true,
         },
-        templateName: {
+        template: {
             alias: 'n',
             default: 'singlepagesummary',
             demandOption: true,
-            describe: 'The name of the template to process, [singlepagesummary, client_ts]',
+            describe: 'The name of the template(s) to process. Space separated list',
+            array: true
         },
 
     })
@@ -47,27 +48,22 @@ const results = yargs
 
 // setup the config here..
 let config: Config;
-let factory: Factory;
+let factory: Promise<void>[] = [];
 
-if (results._.includes('convert')) {
-    config = {
-        input: results.input,
-        output: results.outputdir,
-        task: results.conversion,
-    };
-    factory = new ConversionFactory(config);
-} else {
+results.template.forEach((templateName) => {
     config = {
         input: results.localfile,
         output: results.outputdir,
-        task: results.templateName,
+        task: templateName,
     };
-    factory = new ResourceFactory(config);
-}
+    factory.push(new ResourceFactory(config).start());
+})
+
+
 
 LOG(`Using configuration ${JSON.stringify(config)}`);
 
-factory.start().then(() => {
+Promise.all(factory).then(() => {
     console.log('Done');
 }).catch((err) => {
     LOG(err);

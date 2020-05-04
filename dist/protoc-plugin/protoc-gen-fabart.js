@@ -14,6 +14,9 @@ function _lastElement(str) {
         return '';
     }
 }
+function _getTypeName(str) {
+    return str.split('.').slice(2).join('.');
+}
 // map a field to the schema definition
 // integers here are the protobuf typecodes liste at
 //  https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/type.proto
@@ -60,7 +63,7 @@ function processTypes(messageTypeList, prefix = '') {
         if (typeName.toLowerCase().includes('request')) {
             requests[`${prefix}${typeName}`] = messagetype;
         }
-        else if (typeName.toLowerCase().includes('response')) {
+        else if (typeName.toLowerCase().includes('result')) {
             responses[`${prefix}${typeName}`] = messagetype;
         }
         else {
@@ -76,7 +79,9 @@ function callback(proto) {
     try {
         const metadata = {
             $schema: 'https://hyperledger.github.io/fabric-chaincode-node/release-2.0/api/contract-schema.json',
-            components: {},
+            components: {
+                schemas: {}
+            },
             contracts: {},
             info: {
                 title: proto.pb_package,
@@ -85,6 +90,9 @@ function callback(proto) {
         };
         // load the messageTypes
         processTypes(proto.messageTypeList);
+        console.error(types);
+        console.error(requests);
+        console.error(responses);
         // main contracts
         proto.serviceList.forEach((service) => {
             metadata.contracts[service.name] = {
@@ -96,11 +104,14 @@ function callback(proto) {
                 txFn.name = method.name;
                 txFn.tag = [];
                 txFn.parameters = [];
+                console.error(`TxFn: ${txFn.name}`);
                 if (method.outputType) {
-                    const returnType = (types[method.outputType.substring(method.outputType.lastIndexOf('.') + 1)].fieldList[0]);
+                    let returnTypeName = _getTypeName(method.outputType);
+                    console.error(returnTypeName);
+                    const returnType = (responses[returnTypeName].fieldList[0]);
                     txFn.returns = mapToSchema(returnType, method.outputType.substring(method.outputType.lastIndexOf('.') + 1));
                 }
-                const typeName = method.inputType.substring(method.inputType.lastIndexOf('.') + 1);
+                const typeName = _getTypeName(method.inputType);
                 txFn.parameters = requests[typeName].fieldList.map((f) => {
                     // console.error(f);
                     //  let p = { name: f.name, schema: mapToSchema(f) };
@@ -112,8 +123,7 @@ function callback(proto) {
         // don't want to include the request
         Object.keys(types).filter((t) => !t.toLowerCase().includes('request')).forEach((t) => {
             const type = types[t];
-            console.error(type);
-            metadata.components[type.name] = {
+            metadata.components.schemas[type.name] = {
                 title: type.name,
                 '$id': type.name,
                 description: '',
@@ -122,7 +132,7 @@ function callback(proto) {
             };
             type.fieldList.forEach((f) => {
                 const pgkName = _lastElement(f.typeName);
-                metadata.components[type.name].properties[f.name] = mapToSchema(f, _lastElement(f.typeName));
+                metadata.components.schemas[type.name].properties[f.name] = mapToSchema(f, _lastElement(f.typeName));
             });
         });
         console.error(`Working on ${proto.pb_package}.`);

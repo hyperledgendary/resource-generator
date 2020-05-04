@@ -48,13 +48,13 @@ export default class {{ title | replace(".","_") }} extends State {
    
     {% for name,details in properties %}
     @Property
-    private {{ name }}: {{ details.type }};
+    private {{ name }}: {{ details.type | default(details.type , 'undefined') }};
 
     /**
      * Getter ${{name}}
      * @return { {{ details.type }} }
      */
-    public get ${{name}}(): {{ details.type }} {
+    public get ${{name}}(): {{ details.type |default(details.type , 'undefined') }} {
         return this.{{name}};
     }
 
@@ -62,7 +62,7 @@ export default class {{ title | replace(".","_") }} extends State {
      * Setter ${{name}}
      * @param { {{ details.type }} } value
      */
-    public set ${{name}}(value: {{ details.type }}) {
+    public set ${{name}}(value: {{ details.type |default(details.type , 'undefined') }}) {
         this.{{name}} = value;
     }
     {% endfor %}

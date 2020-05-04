@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 */
 const debug_1 = require("debug");
 const yargs = require("yargs");
-const conversionfactory_1 = require("./conversionfactory");
 const resourcefactory_1 = require("./resourcefactory");
 const LOG = debug_1.default('resourcefactory:cli');
 const results = yargs
@@ -25,11 +24,12 @@ const results = yargs
         describe: 'Directory files to be written to (will be created if does not exist)',
         requiresArg: true,
     },
-    templateName: {
+    template: {
         alias: 'n',
         default: 'singlepagesummary',
         demandOption: true,
-        describe: 'The name of the template to process, [singlepagesummary, client_ts]',
+        describe: 'The name of the template(s) to process. Space separated list',
+        array: true
     },
 })
     .help()
@@ -41,25 +41,17 @@ const results = yargs
     .argv;
 // setup the config here..
 let config;
-let factory;
-if (results._.includes('convert')) {
-    config = {
-        input: results.input,
-        output: results.outputdir,
-        task: results.conversion,
-    };
-    factory = new conversionfactory_1.default(config);
-}
-else {
+let factory = [];
+results.template.forEach((templateName) => {
     config = {
         input: results.localfile,
         output: results.outputdir,
-        task: results.templateName,
+        task: templateName,
     };
-    factory = new resourcefactory_1.default(config);
-}
+    factory.push(new resourcefactory_1.default(config).start());
+});
 LOG(`Using configuration ${JSON.stringify(config)}`);
-factory.start().then(() => {
+Promise.all(factory).then(() => {
     console.log('Done');
 }).catch((err) => {
     LOG(err);

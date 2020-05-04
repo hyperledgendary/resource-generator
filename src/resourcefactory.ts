@@ -38,8 +38,11 @@ export default class ResourceFactory implements Factory {
         this.jsonData = JSON.parse(fs.readFileSync(this.resolvedFilename, 'utf8') as string);
         this.templateRoot = path.join(__dirname, 'templates', config.task);
         LOG(`Using the template root at ${this.templateRoot}`);
+        if (!fs.existsSync(this.templateRoot)){
+            throw new Error(`Unknown template::${this.templateRoot}`);
+        }
 
-        this.output = path.resolve(config.output);
+        this.output = path.resolve(config.output,config.task);
         LOG(`Using the output directory of ${this.output}`);
         mkdirp.sync(this.output);
 
@@ -62,7 +65,7 @@ export default class ResourceFactory implements Factory {
         // trim out typenames and replace with void if needed
         this.env.addFilter('objectname', (str = '') => {
             const typename = str.trim();
-            console.log(`=${typename.trim()}=`);
+            // console.log(`=${typename.trim()}=`);
             if (typename.startsWith('#')) {
 
                 return typename.substring(typename.lastIndexOf('/') + 1);
@@ -79,7 +82,7 @@ export default class ResourceFactory implements Factory {
         const filter = 'filter';
         const expression = jsonata(this.templateCfg[filter]);
         const result = expression.evaluate(this.jsonData);
-
+        LOG(this.jsonData);
         // iterate over the results
         result.forEach((action) => {
             const outputFilename = path.join(this.output, action._filename);
