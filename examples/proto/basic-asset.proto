@@ -1,0 +1,94 @@
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// need generator for a sample 
+
+syntax = "proto3";
+package assettransfer;
+
+import "fabric/contract.proto";
+import "fabric/metadata.proto";
+
+// common result message
+message ContractResult {
+    int32 code = 1;
+    string msg = 2;
+}
+
+message Asset {
+    option (fabric.network_serialization).defaultstyle = JSON;
+    option (fabric.ledger_serialization).defaultstyle = JSON;
+
+    message Key {
+        string key = 1;
+    }
+
+    Key uuid = 1;
+    string value = 2; 
+}
+
+
+// ---------------------------------------------------------------------
+// Transactions:  
+// For each there is a Request and Result type
+message AssetExistsTx {
+    message Request {
+        Asset.Key key = 1;
+    }
+    message Result {
+        ContractResult result =1;
+    }
+}
+
+message ReadAssetTx {
+    message Request {
+        Asset.Key key = 1;
+    }
+    message Result {9
+        ContractResult result = 1;
+        Asset          asset = 2;
+    }
+}
+
+message CreateAssetTx {
+    message Request{  
+        Asset.Key key = 1;
+       string value = 2;
+    }
+    message Result {
+        ContractResult result =1;
+    }
+}
+
+message UpdateAssetTx {
+    message Request{  
+        Asset.Key key = 1;
+       string value = 2;
+    }
+    message Result {
+        ContractResult result =1;
+    }
+}
+
+message DeleteAssetTx {
+    message Request {
+        Asset.Key key = 1;
+    }
+    message Result {
+        ContractResult result =1;
+    }
+}
+
+
+// API definitions
+service AssetTransfer {
+    rpc propseBuyAgreement(BuyAgreementTx.Request) returns (BuyAgreementTx.Result);
+    rpc confirmBuyAgreement(ConfirmBuyAgreementTx.Request) returns (ConfirmBuyAgreementTx.Result);
+
+    rpc assetExists (AssetExistsTx.Request) returns (AssetExistsTx.Result);
+    rpc createAsset (CreateAssetTx.Request) returns (CreateAssetTx.Result);
+    rpc readAsset (ReadAssetTx.Request) returns (ReadAssetTx.Result);
+    rpc updateAsset (UpdateAssetTx.Request) returns (UpdateAssetTx.Result);
+    rpc deleteAsset (DeleteAssetTx.Request) returns (DeleteAssetTx.Result);
+}

@@ -1,0 +1,79 @@
+{% macro schema(s) %}
+{% if s.type %}
+   {{s.type  }}
+{% else %} 
+   {{s.$ref | objectname }}
+{% endif %}
+{% endmacro %}
+
+{% macro parameters(params) %}
+{% for p in params -%} {{p.name}}:{{- schema(p.schema) -}}
+    {%- if not loop.last -%}, {% endif -%}
+{%- endfor %}
+{% endmacro %}
+
+{% macro arglist(params) %}
+{% if params %}
+{% for p in params -%} JSON.stringify({{p.name}})
+    {%- if not loop.last -%}, {% endif -%}
+{%- endfor %}
+{%- endif %}
+{% endmacro %}
+
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+//! Basic CRUD style asset contract
+//! 
+//! 
+
+use fabric_contract::contractapi::contract::*;
+use fabric_contract::contractapi::context::*;
+use fabric_contract::contractapi::contract::Routing;
+
+// macros for marking up the contract
+use contract_macros::contract_impl;
+
+pub struct {{ contract.name | replace(".","_") }}  {
+
+
+}
+
+// Implementation of the contract trait for the {{ contract.name }}
+/// There are default implementation methods, but can be modified if you wish
+/// 
+/// Recommended that the name() function is always modified
+impl Contract for {{ contract.name | replace(".","_") }} {
+
+    //! Name of the contract
+    fn name(&self) -> String {
+        format!("{{ contract.name }}")
+    }
+
+    /// Implementing a customer before transaction
+    fn before_transaction(&self,ctx: Context)  {
+        ctx.log(String::from("Custom Before_Transaction"));
+    }
+    
+}
+
+
+#[contract_impl]
+impl {{ contract.name | replace(".","_") }} {
+
+    pub fn new() -> {{ contract.name | replace(".","_") }} {
+        {{ contract.name | replace(".","_") }} {           
+        }
+    }
+    {% for tx in contract.transactions %}
+    @Transaction()
+    @Returns({{ schema(tx.return[0].schema) | trim }})
+    pub fn {{tx.name}}(&self, mut ctx: Context, {{- parameters(tx.parameters) | trim  -}}) -> Result<{{ schema(tx.return[0].schema) | trim }},String>{
+        // Please could you enter something here...
+        Ok(0)
+    }
+    {% endfor %}
+}
+
+

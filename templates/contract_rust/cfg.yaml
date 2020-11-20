@@ -1,0 +1,15 @@
+cfg:
+	name: contract_rust
+	description: Single class of contract
+	# The version of the metadata schema this generator can handle
+	schemaref: version1
+	filter: >
+    [
+      contracts.$keys().{
+        "_filename":$,
+        "_extension":".rs",
+        "_data": { "contract": $lookup($$.contracts,$) , "components": $$.components },
+        "_template":"rustclass.njk",
+        "_prettier":  "none"
+      }
+    ]

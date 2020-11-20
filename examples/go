@@ -13,4 +13,4 @@ protoc --plugin="${PROTOC_PLUGIN}" -I ${DIR}/proto ${DIR}/proto/AssetTransfer.pr
 
 # run the template generation side of the plugin here
 #DEBUG=* fabart create --localfile ${DIR}/generated/assettransfer-md.json --outputdir ${DIR}/generated/ --template contract_ts domain_adts_ts domain_adts_java client_java
-DEBUG=* fabart create --localfile ${DIR}/generated/assettransfer-md.json --outputdir ${DIR}/generated/ --template  contract_ts domain_adts_ts
+DEBUG=* fabart create --localfile ${DIR}/generated/assettransfer-md.json --outputdir ${DIR}/generated/ --template  contract_ts domain_adts_ts contract_rust
