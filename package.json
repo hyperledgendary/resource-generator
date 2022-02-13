@@ -23,7 +23,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "ajv": "^6.6.1",
+        "ajv": "^6.12.3",
         "buffer-to-uint8array": "^1.1.0",
         "composer-concerto": "^0.70.5",
         "google-protobuf": "^3.11.4",
